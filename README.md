@@ -54,3 +54,121 @@
 +----------------------+------------------+-----------------------------+--------------------------------------------------------------+
 
 ```
+Extensions
+
+```
+# 🔧 pg_repack
+
+What it does: Reorganizes tables and indexes to remove bloat without requiring heavy locks.
+
+Why use it: Alternative to VACUUM FULL, but works online with minimal disruption.
+
+How it works: Creates a new table, copies data, applies changes via a log table, then swaps.
+
+Create:
+CREATE EXTENSION pg_repack;
+
+Precheck:
+Table must have a primary key or UNIQUE NOT NULL index.
+Ensure enough free disk space (2x the size of table + indexes).
+
+Postcheck:
+Monitor logs and verify table size reduction.
+Use pgstattuple to confirm bloat removal.
+```
+```
+🧠 plpgsql
+What it does: Enables procedural programming in PostgreSQL (loops, conditions, variables).
+Why use it: Needed for writing stored procedures, triggers, and complex functions.
+How it works: SQL is embedded in procedural blocks using BEGIN...END.
+----
+Create
+CREATE EXTENSION IF NOT EXISTS plpgsql;
+----
+(Usually preloaded by default)
+Precheck/Postcheck: Not applicable—it's a core language.
+Supported versions: All PostgreSQL versions (enabled by default)
+```
+```
+📊 pg_stat_statements
+
+What it does: Tracks execution statistics of SQL statements.
+Why use it: Helps identify slow queries and optimize performance.
+How it works: Collects metrics like execution time, rows returned, and block hits.
+----
+Create: Add to postgresql.conf:
+shared_preload_libraries = 'pg_stat_statements'
+Then restart and run:
+CREATE EXTENSION pg_stat_statements;
+
+----
+Precheck:
+Must be added to shared_preload_libraries.
+Requires server restart.
+
+Postcheck:
+Query pg_stat_statements view to analyze performance.
+
+```
+```
+⏱️ pg_cron
+
+What it does: Schedules SQL jobs using cron syntax inside PostgreSQL.
+Why use it: Automates maintenance, reporting, and recurring tasks.
+How it works: Background worker executes scheduled SQL commands.
+Create: Add to postgresql.conf:
+shared_preload_libraries = 'pg_cron'
+CREATE EXTENSION pg_cron;
+
+Precheck:
+Requires shared_preload_libraries.
+Must be installed in only one database per cluster.
+
+Postcheck:
+Monitor cron.job and cron.job_run_details tables.
+```
+
+```
+🤖 azure_ai
+What it does: Connects PostgreSQL to Azure Cognitive Services for AI/ML inference.
+
+Why use it: Enables real-time predictions and analysis directly from SQL.
+
+How it works: Uses REST APIs to send data to Azure AI and return results.
+
+Create:
+CREATE EXTENSION azure_ai;
+
+Precheck:
+Must be allowlisted in Azure Flexible Server.
+Requires Azure credentials and endpoint setup.
+
+Postcheck:
+Validate inference results and monitor latency.
+```
+
+```
+🧹 pg_squeeze
+
+What it does: Automatically removes table bloat using background workers.
+
+Why use it: Like pg_repack, but more efficient and less intrusive.
+
+How it works: Uses logical decoding to rebuild tables with minimal locking.
+
+Create: Add to postgresql.conf:
+shared_preload_libraries = 'pg_squeeze'
+wal_level = logical
+max_replication_slots = 1
+
+Then restart and run:
+CREATE EXTENSION pg_squeeze;
+
+Precheck:
+Table must have a primary key or identity index.
+Register table in squeeze.tables:
+INSERT INTO squeeze.tables (tabschema, tabname, schedule) VALUES ('public', 'my_table', ...);
+
+Postcheck:
+Monitor squeeze logs and verify table size reduction.
+```
