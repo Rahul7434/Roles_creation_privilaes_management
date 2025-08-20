@@ -54,6 +54,71 @@
 +----------------------+------------------+-----------------------------+--------------------------------------------------------------+
 
 ```
+User Privileges :-
+```
+User management in PostgreSQL involves creating, granting, revoking, and dropping users/roles. Below is a detailed answer for your questions related to user privilege management and error handling.
+✅ 1. What are the privileges we can give to users on all levels?
+🔹 Levels & Privileges:
+LevelPrivilegesDescriptionServer LevelLOGIN, CREATEDB, CREATEROLE, SUPERUSER, REPLICATION, BYPASSRLSAssigned during role/user creationDatabase LevelCONNECT, TEMP, CREATEAllow connect, create temp tables, create schemasSchema LevelUSAGE, CREATEUsage = access objects; Create = create objectsTable LevelSELECT, INSERT, UPDATE, DELETE, TRUNCATE, REFERENCES, TRIGGERObject-level DML permissionsSequence LevelUSAGE, SELECT, UPDATEControl on nextval, currval, setvalFunction LevelEXECUTEPermission to run the functionColumn LevelSELECT, INSERT, UPDATEFine-grained table column permissions
+✅ 2. How to grant privileges to users? (All Ways)
+🔹 Server Level (Role Options)
+CREATE ROLE user1 LOGIN CREATEDB CREATEROLE;
+ALTER ROLE user1 WITH REPLICATION;
+🔹 Database Level
+GRANT CONNECT ON DATABASE db1 TO user1;
+GRANT CREATE, TEMP ON DATABASE db1 TO user1;
+🔹 Schema Level
+GRANT USAGE ON SCHEMA public TO user1;
+GRANT CREATE ON SCHEMA public TO user1;
+🔹 Table Level
+GRANT SELECT, INSERT ON TABLE emp TO user1;
+🔹 All Tables in Schema
+GRANT SELECT ON ALL TABLES IN SCHEMA public TO user1;
+🔹 Future Tables (Default Privileges)
+ALTER DEFAULT PRIVILEGES IN SCHEMA public GRANT SELECT ON TABLES TO user1;
+🔹 Column Level
+GRANT SELECT (id, name) ON emp TO user1;
+🔹 Function Level
+GRANT EXECUTE ON FUNCTION func1() TO user1;
+✅ 3. How to revoke privileges (All levels & all ways)?
+🔹 Database Level
+REVOKE CONNECT ON DATABASE db1 FROM user1;
+🔹 Schema Level
+REVOKE USAGE, CREATE ON SCHEMA public FROM user1;
+🔹 Table Level
+REVOKE SELECT, INSERT ON emp FROM user1;
+REVOKE ALL ON ALL TABLES IN SCHEMA public FROM user1;
+🔹 Column Level
+REVOKE SELECT (id, name) ON emp FROM user1;
+🔹 Function Level
+REVOKE EXECUTE ON FUNCTION func1() FROM user1;
+🔹 Sequence
+REVOKE USAGE, SELECT, UPDATE ON SEQUENCE seq1 FROM user1;
+🔹 Default Privileges
+ALTER DEFAULT PRIVILEGES IN SCHEMA public REVOKE SELECT ON TABLES FROM user1;
+✅ 4. What are the common errors while revoking privileges?
+Error MessageCauseExampleWARNING: no privileges could be revokedUser doesn't have the privileges you're trying to revokeAlready revoked or never grantedERROR: permission deniedYou are not the owner of object or not superuserRevoking from another user’s tableERROR: column "xyz" does not existMistyped column nameRevoke on wrong columnERROR: must be owner of relation/tableYou tried revoking on a table you don’t ownNon-owner revoke attempt
+✅ 5. GRANT USER, CREATE USER, DROP USER
+🔹 CREATE USER / ROLE
+CREATE USER user1 WITH PASSWORD 'pass';
+-- OR
+CREATE ROLE user1 LOGIN PASSWORD 'pass';
+🔹 GRANT ROLE Privileges
+GRANT SELECT ON emp TO user1;
+GRANT CONNECT ON DATABASE db1 TO user1;
+🔹 DROP USER
+DROP USER user1;
+-- OR
+DROP ROLE user1;
+⚠️ Errors While Dropping User:
+ErrorCauseFixERROR: role "user1" cannot be dropped because some objects depend on itUser owns objects (tables, schemas)Reassign ownership or drop objectsERROR: role "user1" is a member of role "xyz"Role assigned to other rolesREVOKE xyz FROM user1;ERROR: role "user1" does not existMistyped or already droppedVerify with \du or query pg_roles
+✅ Summary (Marathi)
+आपण सर्व्हर, डेटाबेस, स्कीमा, टेबल, फंक्शन, कॉलम अशा प्रत्येक स्तरावर user ला privileges देऊ शकतो.
+Grant करण्यासाठी GRANT वापरतो आणि revoke करण्यासाठी REVOKE.
+जर user च्या नावावर काही object असतील तर direct drop करता येत नाही.
+Default privileges आणि future object साठी ALTER DEFAULT PRIVILEGES वापरतो.
+Let me know if you want a real example or Python automation code for this.
+```
 Extensions
 
 ```
