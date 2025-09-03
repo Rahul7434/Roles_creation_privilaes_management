@@ -1,3 +1,44 @@
+👤 Role Creation in PostgreSQL
+```
+What is a Role?
+A role in PostgreSQL is a database-level identity that can represent a user, a group, or both. Roles can own objects, log in, and be granted privileges
+
+🛠️ Creating a Role
+CREATE ROLE myuser;
+
+This creates a role without login capability. To allow login, use:
+CREATE ROLE myuser WITH LOGIN PASSWORD 'securepassword';
+
+🔐 Role Attributes
+------------------
+Attribute      Description
+---------      ---------------------------------------------------------
+LOGIN          Allows the role to connect to the database
+SUPERUSER      Grants all privileges (use with caution!)
+CREATEDB       Allows role to create new databases
+CREATEROLE     Allows role to create other roles
+INHERIT        Role inherits privileges from roles it is a member of
+REPLICATION    Allows replication connections
+BYPASSRLS      Bypasses row-level security policies  
+
+Example with multiple attributes:
+CREATE ROLE admin WITH LOGIN CREATEDB CREATEROLE INHERIT PASSWORD 'adminpass';
+
+-Roles can be members of other roles (like groups):
+GRANT dev_team TO alice;
+
+🔄 Role Management Summary
+--------------------------
+Task                    Command
+----                    -----------------------------------------------
+Create role             CREATE ROLE myuser;
+Allow login             CREATE ROLE myuser WITH LOGIN;
+Set password            ALTER ROLE myuser WITH PASSWORD 'pass';
+Grant role membership   GRANT roleA TO roleB;
+Drop role               DROP ROLE myuser;
+
+```
+
 ## Privileges
 ```
 - When an objects are created in postgresql, It is assigned an owner. The owner is normally the role that ececuted the creation statement.
