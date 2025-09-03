@@ -3,13 +3,47 @@
 - When an objects are created in postgresql, It is assigned an owner. The owner is normally the role that ececuted the creation statement.
 - Only owner and super user can do aything with the objects. To allow other roles to use objects. Privileges must be granted.
 
- Postgresql provides different kind of privileges 
- [SELECT,INSERT,UPDATE,DELETE,TRUNCATE,REFERANCE,USAGE,TRIGER,CREATE,CONNECT,TEMPORARY,EXECUTE]
+* Postgresql provides different kind of privileges 
+    [SELECT,INSERT,UPDATE,DELETE,TRUNCATE,REFERANCE,USAGE,TRIGER,CREATE,CONNECT,TEMPORARY,EXECUTE]
+   -These privileges are depends on objects type [table, index,sequence, functin etc..]
+   - We can assign new new owner to object by using "ALTER objectname" command but this can be done by SUPERUSER and if the role is member of ownning role and current owner.
 
-These privileges are depends on objects type [table, index,sequence, functin etc..]
+* We can Grant following three Database Level Privileges to role:-  
+ -CONNECT	: Allows connection to the database
+ -CREATE	: Allows creation of new schemas within the database
+ -TEMPORARY : or TEMP	Allows creation of temporary tables
 
- - We can assign new new owner to object by using "ALTER objectname" command but this can be done by SUPERUSER and if the role is member of ownning role and current owner.
- 
+( GRANT CONNECT, CREATE, TEMP ON DATABASE mydb TO myuser; )
+
+* We can Grant following 7 Tables & Views Level Privileges to role:- 
+SELECT	       Read rows
+INSERT	       Add rows
+UPDATE	       Modify rows
+DELETE	       Remove rows
+TRUNCATE	     Remove all rows
+REFERENCES	   Create foreign keys
+TRIGGER	      Create triggers
+
+(GRANT SELECT, INSERT, UPDATE ON TABLE mytable TO myuser;)
+
+* We can Grant following 3 Seaquence Level Privileges to role:-
+USAGE	    Use the sequence
+SELECT	   Read current value
+UPDATE	    Modify current value
+
+(GRANT USAGE, SELECT ON SEQUENCE myseq TO myuser;)
+
+* We can Grant following 1 Functions & Procedures Level Privileges to role:-
+EXECUTE  :	Run the function/procedure
+
+(GRANT EXECUTE ON FUNCTION myfunc(int) TO myuser;)
+
+* We can grant following 2 Schemas level privileges to role:-
+USAGE:	Access objects in the schema
+CREATE:	Create new objects in the schema
+
+(GRANT USAGE, CREATE ON SCHEMA myschema TO myuser;)
+
 ```
  
 
