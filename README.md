@@ -1,4 +1,4 @@
-# Privileges
+## Privileges
 ```
 - When an objects are created in postgresql, It is assigned an owner. The owner is normally the role that ececuted the creation statement.
 - Only owner and super user can do aything with the objects. To allow other roles to use objects. Privileges must be granted.
@@ -45,13 +45,37 @@ CREATE:	Create new objects in the schema
 (GRANT USAGE, CREATE ON SCHEMA myschema TO myuser;)
 
 ```
- 
+## 🧬  Default Privileges
+```
+These control what privileges are automatically granted on newly created objects.
 
+* Use ALTER DEFAULT PRIVILEGES to set them:
+ALTER DEFAULT PRIVILEGES IN SCHEMA myschema
+GRANT SELECT, INSERT ON TABLES TO myuser;
 
+* You can set defaults for:
+Tables
+Sequences
+Functions
+Types
+Schemas
+```
 
+## 🛡️ Granting All Privileges
+```
+If you want to grant all possible privileges, use:
+🔹 On a database:
+GRANT ALL PRIVILEGES ON DATABASE mydb TO myuser;
+🔹 On a table:
+GRANT ALL PRIVILEGES ON TABLE mytable TO myuser;
+🔹 On a schema:
+GRANT ALL PRIVILEGES ON SCHEMA myschema TO myuser;
 
+🧹 Bonus: Revoking Privileges
+To remove access:
+REVOKE ALL PRIVILEGES ON DATABASE mydb FROM 
 
-
+```
 
 
 
