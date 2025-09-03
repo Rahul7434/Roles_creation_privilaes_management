@@ -119,8 +119,138 @@ REVOKE ALL PRIVILEGES ON DATABASE mydb FROM
 
 ```
 
+```
+-- 🔐 DATABASE LEVEL PRIVILEGES
+SELECT 
+  datname AS database_name,
+  pg_catalog.pg_get_userbyid(datdba) AS owner,
+  has_database_privilege('your_role', datname, 'CONNECT') AS can_connect,
+  has_database_privilege('your_role', datname, 'CREATE') AS can_create,
+  has_database_privilege('your_role', datname, 'TEMP') AS can_temp
+FROM pg_database;
+
+-- 🏛️ SCHEMA LEVEL PRIVILEGES
+SELECT 
+  n.nspname AS schema_name,
+  pg_catalog.pg_get_userbyid(n.nspowner) AS owner,
+  has_schema_privilege('your_role', n.nspname, 'USAGE') AS can_use,
+  has_schema_privilege('your_role', n.nspname, 'CREATE') AS can_create
+FROM pg_namespace n
+WHERE n.nspname NOT LIKE 'pg_%' AND n.nspname <> 'information_schema';
+
+-- 📊 TABLE & VIEW PRIVILEGES
+SELECT 
+  table_schema,
+  table_name,
+  privilege_type
+FROM information_schema.role_table_grants
+WHERE grantee = 'your_role';
+
+-- 📌 COLUMN LEVEL PRIVILEGES
+SELECT 
+  table_schema,
+  table_name,
+  column_name,
+  privilege_type
+FROM information_schema.column_privileges
+WHERE grantee = 'your_role';
+
+-- 🔁 SEQUENCE PRIVILEGES
+SELECT 
+  sequence_schema,
+  sequence_name,
+  privilege_type
+FROM information_schema.role_usage_grants
+WHERE grantee = 'your_role';
+
+-- 🧠 FUNCTION & PROCEDURE PRIVILEGES
+SELECT 
+  routine_schema,
+  routine_name,
+  privilege_type
+FROM information_schema.role_routine_grants
+WHERE grantee = 'your_role';
 
 
+------------------------------------------------
+
+-- 🗃️ DATABASE PRIVILEGES
+SELECT datname AS database_name,
+       pg_catalog.pg_get_userbyid(datdba) AS owner,
+       has_database_privilege('your_role', datname, 'CONNECT') AS can_connect,
+       has_database_privilege('your_role', datname, 'CREATE') AS can_create,
+       has_database_privilege('your_role', datname, 'TEMP') AS can_temp
+FROM pg_database;
+
+-- 🏛️ SCHEMA PRIVILEGES
+SELECT n.nspname AS schema_name,
+       pg_catalog.pg_get_userbyid(n.nspowner) AS owner,
+       has_schema_privilege('your_role', n.nspname, 'USAGE') AS can_use,
+       has_schema_privilege('your_role', n.nspname, 'CREATE') AS can_create
+FROM pg_namespace n
+WHERE n.nspname NOT LIKE 'pg_%' AND n.nspname <> 'information_schema';
+
+-- 📦 TABLE & VIEW PRIVILEGES
+SELECT table_schema,
+       table_name,
+       privilege_type,
+       grantee
+FROM information_schema.role_table_grants
+WHERE grantee = 'your_role';
+
+-- 📊 COLUMN PRIVILEGES
+SELECT table_schema,
+       table_name,
+       column_name,
+       privilege_type,
+       grantee
+FROM information_schema.column_privileges
+WHERE grantee = 'your_role';
+
+-- 🔁 SEQUENCE PRIVILEGES
+SELECT sequence_schema,
+       sequence_name,
+       privilege_type,
+       grantee
+FROM information_schema.role_usage_grants
+WHERE grantee = 'your_role';
+
+-- 🧠 FUNCTION & PROCEDURE PRIVILEGES
+SELECT routine_schema,
+       routine_name,
+       specific_name,
+       privilege_type,
+       grantee
+FROM information_schema.role_routine_grants
+WHERE grantee = 'your_role';
+
+-- 🧱 TABLESPACE PRIVILEGES
+SELECT spcname AS tablespace_name,
+       pg_catalog.pg_get_userbyid(spcowner) AS owner,
+       has_tablespace_privilege('your_role', spcname, 'CREATE') AS can_create
+FROM pg_tablespace;
+
+-- 🧊 LARGE OBJECT PRIVILEGES
+SELECT loid AS large_object_oid,
+       pg_catalog.array_to_string(lomacl, ',') AS privileges
+FROM pg_largeobject_metadata
+WHERE lomacl IS NOT NULL AND
+      EXISTS (
+        SELECT 1 FROM pg_roles WHERE rolname = 'your_role'
+        AND POSITION(rolname IN pg_catalog.array_to_string(lomacl, ',')) > 0
+      );
+
+-- 🌐 FOREIGN DATA WRAPPER PRIVILEGES
+SELECT fdwname AS foreign_data_wrapper,
+       has_foreign_data_wrapper_privilege('your_role', fdwname, 'USAGE') AS can_use
+FROM pg_foreign_data_wrapper;
+
+-- 🌍 FOREIGN SERVER PRIVILEGES
+SELECT srvname AS foreign_server,
+       has_server_privilege('your_role', srvname, 'USAGE') AS can_use
+FROM pg_foreign_server;
+
+```
 
 
 
