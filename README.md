@@ -85,6 +85,24 @@ CREATE:	Create new objects in the schema
 
 (GRANT USAGE, CREATE ON SCHEMA myschema TO myuser;)
 
+✅ Types of Objects You Can Grant Privileges On
+
+Object Type           Privileges You Can Grant                          Notes
+-----------------------------------------------------------------------------------------------
+Database              CONNECT, CREATE, TEMP                             Controls access to the database itself
+Schema                USAGE, CREATE                                     Controls access to objects inside the schema
+Table                 SELECT, INSERT, UPDATE, DELETE, TRUNCATE,         Most commonly used
+                      REFERENCES, TRIGGER
+Sequence              USAGE, SELECT, UPDATE                             For auto-incrementing values
+Function              EXECUTE                                           Needed to run stored procedures
+Type                  USAGE                                             For custom data types
+Foreign Data Wrapper  USAGE                                             For external data sources
+Foreign Server        USAGE                                             For connecting to external servers
+Large Object          SELECT, UPDATE                                    Used for binary data (less common)
+Tablespace            CREATE                                            Controls where objects are stored
+Column                SELECT, UPDATE, INSERT, REFERENCES                Can be granted at column level too
+
+
 ```
 ## 🧬  Default Privileges
 ```
@@ -118,7 +136,7 @@ To remove access:
 REVOKE ALL PRIVILEGES ON DATABASE mydb FROM 
 
 ```
-
+## Quries for get granted priviles on objects , DB, schema level :-
 ```
 -- 🔐 DATABASE LEVEL PRIVILEGES
 SELECT 
