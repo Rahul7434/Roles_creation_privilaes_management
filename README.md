@@ -47,7 +47,8 @@ CREATE:	Create new objects in the schema
 ```
 ## 🧬  Default Privileges
 ```
-These control what privileges are automatically granted on newly created objects.
+-These control what privileges are automatically granted on newly created objects.
+-if you configure default privileges for a role, then any new table or sequence created by that role will automatically grant those privileges to the specified target role or user.
 
 * Use ALTER DEFAULT PRIVILEGES to set them:
 ALTER DEFAULT PRIVILEGES IN SCHEMA myschema
