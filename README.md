@@ -136,6 +136,16 @@ To remove access:
 REVOKE ALL PRIVILEGES ON DATABASE mydb FROM 
 
 ```
+## Query to find Dependencies
+```
+SELECT 
+    grantee, privilege_type, table_schema, table_name
+FROM 
+    information_schema.role_table_grants
+WHERE 
+    grantee = 'pk';
+
+```
 ## Quries for get granted priviles on objects , DB, schema level :-
 ```
 -- 🔐 DATABASE LEVEL PRIVILEGES
